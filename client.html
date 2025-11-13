@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Image Processing Client</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .preview {
+      display: flex;
+      gap: 20px;
+    }
+
+    .preview img {
+      max-width: 300px;
+      max-height: 300px;
+      border: 1px solid #ddd;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    progress {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Image Processing Client</h1>
+
+    <div class="controls">
+      <input type="file" id="imageInput" accept="image/*">
+      <button id="uploadBtn">Process Image</button>
+      <progress id="progressBar" value="0" max="100" style="display: none;"></progress>
+    </div>
+
+    <div class="preview">
+      <div>
+        <h3>Original Image</h3>
+        <img id="originalPreview" src="" alt="Original image will appear here">
+      </div>
+      <div>
+        <h3>Processed Image</h3>
+        <img id="processedPreview" src="" alt="Processed image will appear here">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('imageInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById('originalPreview').src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('uploadBtn').addEventListener('click', async function() {
+      const fileInput = document.getElementById('imageInput');
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      const res = await fetch('https://cqffvrharqdjexwapdma.supabase.co/functions/v1/process-image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) {
+        console.error(await res.text());
+      } else {
+        const blob = await res.blob();
+        const imgUrl = URL.createObjectURL(blob);
+        document.querySelector('#preview').src = imgUrl;
+      }
+    });
+  </script>
+</body>
+
+</html>
