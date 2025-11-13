@@ -92,7 +92,7 @@
       const file = fileInput.files[0];
 
       if (!file) {
-        alert('Please select an image first');
+        alert("Please select a file first");
         return;
       }
 
@@ -108,7 +108,9 @@
       });
 
       if (!res.ok) {
-        alert(await res.text());
+        let error = await res.json();
+        alert(error.error);
+        progressBar.style.display = "none";
       } else {
         const blob = await res.blob();
         const imgUrl = URL.createObjectURL(blob);
