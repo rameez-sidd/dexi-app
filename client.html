@@ -91,17 +91,21 @@
       const formData = new FormData();
       formData.append('file', fileInput.files[0]);
 
+      progressBar = document.querySelector("#progressBar");
+      progressBar.style.display = "block";
+
       const res = await fetch('https://cqffvrharqdjexwapdma.supabase.co/functions/v1/process-image', {
         method: 'POST',
         body: formData,
       });
 
       if (!res.ok) {
-        console.error(await res.text());
+        alert(await res.text());
       } else {
         const blob = await res.blob();
         const imgUrl = URL.createObjectURL(blob);
-        document.querySelector('#preview').src = imgUrl;
+        document.querySelector('#processedPreview').src = imgUrl;
+        progressBar.style.display = "none";
       }
     });
   </script>
